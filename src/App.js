@@ -7,10 +7,17 @@ const data = {
   "Green": [[1, 1, 0, 1, 1], [1, 1, 0, 0, 1]],
   "Orange": [[-1, 1, 0, 0, -1], [0, 1, 0, 0, 0]]
 };
+
 const dots = {
   '1': 'green',
   '0': 'yellow',
   '-1': 'red'
+};
+
+const suffices = {
+  '1': '-up',
+  '0': '',
+  '-1': '-down'
 };
 
 const deltas = history => (
@@ -18,7 +25,7 @@ const deltas = history => (
 )
 
 const TeamRating = ({rating, delta}) => (
-  <td><img src={`images/rating-${dots['' + rating]}.png`} alt={rating}/></td>
+  <td><img src={`images/rating-${dots[rating]}${suffices[delta]}.png`} alt={rating}/></td>
 )
 
 const TeamRow = ({team, ratings, deltas}) => (
