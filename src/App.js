@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-const cols = ['Summary', 'Value', 'Velocity', 'Quality', 'Team', 'Client'];
+const cols = ['Value', 'Velocity', 'Quality', 'Team', 'Client'];
 const data = {
   "Blue": [[1, 1, 0, -1, 1], [1, 1, 0, 1, 0]],
   "Green": [[1, 1, 0, 1, 1], [1, 1, 0, 0, 1]],
@@ -13,19 +13,19 @@ const dots = {
   '-1': 'red'
 };
 
-const summarizeRatings = (ratings) => (
-  Math.sign(ratings.reduce((sum, rating) => sum + rating, 0))
-);
+const deltas = history => (
+  (fn => history[0].map(fn))(history.length < 2 ? x => 0 : (x, i) => x - history[1][i])
+)
 
-const TeamRating = ({rating}) => (
+const TeamRating = ({rating, delta}) => (
   <td><img src={`images/rating-${dots['' + rating]}.png`} alt={rating}/></td>
 )
 
-const TeamRow = ({team, ratings}) => (
+const TeamRow = ({team, ratings, deltas}) => (
   <tr>
     <th>{team}</th>
-    <TeamRating rating={summarizeRatings(ratings)} />
-    { ratings.map((rating, index) => <TeamRating key={index} rating={rating} />)}  
+    { ratings.map((rating, index) => 
+      <TeamRating key={index} delta={deltas[index]} rating={rating} />)}  
   </tr>
 )
 
@@ -35,7 +35,9 @@ const Dashboard = ({cols, data}) => (
       <tr><th>Team</th>{ cols.map(col => <th key={col}>{col}</th>)}</tr>
     </thead>
     <tbody>
-      { Object.keys(data).map(team => <TeamRow key={team} team={team} ratings={data[team][0]} />)}
+      { Object.keys(data).map(team =>
+         <TeamRow key={team} team={team}
+          ratings={data[team][0]} deltas={deltas(data[team])} />)}
     </tbody>
   </table>
 );
