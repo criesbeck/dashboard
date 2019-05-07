@@ -8,37 +8,33 @@ const data = {
   "Orange": [[-1, 1, 0, 0, -1], [0, 1, 0, 0, 0]]
 };
 
-const dots = {
-  '1': 'green',
-  '0': 'yellow',
-  '-1': 'red'
+const iconUrl = (data, index) => {
+  const newRating = data[0][index];
+  const oldRating = data[1][index];
+  const color = newRating > 0 ? 'green' : newRating < 0 ? 'red' : 'yellow';
+  const suffix = newRating > oldRating ? '-up' : newRating < oldRating ? '-down' : ''; 
+  return `images/rating-${color}${suffix}.png`;
 };
 
-const suffices = {
-  '1': '-up',
-  '0': '',
-  '-1': '-down'
+const ratingText = (data, index) => {
+  const newRating = data[0][index];
+  const oldRating = data[1][index];
+  const state = newRating > 0 ? 'good' : newRating < 0 ? 'bad' : 'OK';
+  const change = newRating > oldRating ? ', rising' : newRating < oldRating ? ', falling' : ', unchanged';
+  return state + change;
 };
 
-const iconUrl = (rating, delta) => (
-  `images/rating-${dots[rating]}${suffices[Math.sign(delta)]}.png`
-)
+const TeamRating = ({data, index}) => (
+  <td><img src={iconUrl(data, index)} alt={ratingText(data, index)}/></td>
+);
 
-const deltas = history => (
-  (fn => history[0].map(fn))(history.length < 2 ? x => 0 : (x, i) => x - history[1][i])
-)
-
-const TeamRating = ({rating, delta}) => (
-  <td><img src={iconUrl(rating, delta)} alt={rating}/></td>
-)
-
-const TeamRow = ({team, ratings, deltas}) => (
+const TeamRow = ({team, data}) => (
   <tr>
     <th>{team}</th>
-    { ratings.map((rating, index) => 
-      <TeamRating key={index} rating={rating} delta={deltas[index]} />)}  
+    { data[0].map((rating, index) => 
+      <TeamRating key={index} data={data} index={index} />)}  
   </tr>
-)
+);
 
 const Dashboard = ({cols, data}) => (
   <table className="table">
@@ -47,8 +43,7 @@ const Dashboard = ({cols, data}) => (
     </thead>
     <tbody>
       { Object.keys(data).map(team =>
-         <TeamRow key={team} team={team}
-          ratings={data[team][0]} deltas={deltas(data[team])} />)}
+         <TeamRow key={team} team={team} data={data[team]} />)}
     </tbody>
   </table>
 );
