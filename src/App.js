@@ -20,19 +20,23 @@ const suffices = {
   '-1': '-down'
 };
 
+const iconUrl = (rating, delta) => (
+  `images/rating-${dots[rating]}${suffices[Math.sign(delta)]}.png`
+)
+
 const deltas = history => (
   (fn => history[0].map(fn))(history.length < 2 ? x => 0 : (x, i) => x - history[1][i])
 )
 
 const TeamRating = ({rating, delta}) => (
-  <td><img src={`images/rating-${dots[rating]}${suffices[delta]}.png`} alt={rating}/></td>
+  <td><img src={iconUrl(rating, delta)} alt={rating}/></td>
 )
 
 const TeamRow = ({team, ratings, deltas}) => (
   <tr>
     <th>{team}</th>
     { ratings.map((rating, index) => 
-      <TeamRating key={index} delta={deltas[index]} rating={rating} />)}  
+      <TeamRating key={index} rating={rating} delta={deltas[index]} />)}  
   </tr>
 )
 
