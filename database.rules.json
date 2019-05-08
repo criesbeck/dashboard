@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": "auth.role == 'instructor'",
+    ".write": "auth.role == 'instructor'",
+    "$course": {
+      "members": {
+        "$uid": {
+          ".read": true,
+          ".write": "auth.uid == $uid"
+        }
+      },
+      "moods": {
+        "$day": {
+          "$uid": {
+            ".read": true,
+            ".write": "auth.uid == $uid"
+          }
+        }
+      }
+    }
+  }
+}
